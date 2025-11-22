@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Classroom - Unleash Your Potential</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="home-page">
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <span class="logo-text">⚡ Virtual Classroom</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html" class="nav-link active">🏠 Home</a></li>
+                <li><a href="login.html" class="nav-link btn-glow">🚀 Login</a></li>
+                <li><a href="register.html" class="nav-link btn-glow">✨ Join Now</a></li>
+                <li><a href="#" id="themeToggle" class="nav-link">🌞 Light</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title text-glow mega-glow">Virtual Classroom</h1>
+            <p class="hero-subtitle glow-text">🔥 Unleash Your Potential • Learn Without Limits 🚀</p>
+            <p class="hero-tagline">Master New Skills in the Most Epic Way Possible</p>
+            <div class="floating-orbs">
+                <div class="orb orb-1"></div>
+                <div class="orb orb-2"></div>
+                <div class="orb orb-3"></div>
+                <div class="orb orb-4"></div>
+                <div class="orb orb-5"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search Section -->
+    <section class="search-section">
+        <div class="container">
+            <h2 class="search-heading">🎯 Discover Your Next Adventure</h2>
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="🔍 Search for epic courses..." class="search-input">
+                <button class="search-btn btn-glow mega-btn">
+                    <span>EXPLORE</span>
+                </button>
+            </div>
+            <div id="filterChips" style="display:flex;gap:12px;justify-content:center;margin-top:16px;"></div>
+        </div>
+    </section>
+
+    <!-- Courses Section -->
+    <section class="courses-section">
+        <div class="container">
+            <h2 class="section-title ultra-glow">🌟 Trending Courses 🔥</h2>
+            <p class="section-subtitle">Level Up Your Skills with These Mind-Blowing Courses</p>
+            <div class="courses-grid" id="coursesGrid"></div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number glow-text">10K+</div>
+                    <div class="stat-label">Epic Students</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number glow-text">500+</div>
+                    <div class="stat-label">Killer Courses</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number glow-text">100+</div>
+                    <div class="stat-label">Expert Mentors</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number glow-text">95%</div>
+                    <div class="stat-label">Success Rate</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p class="footer-text">💜 Made with passion • 2024 Virtual Classroom • All rights reserved 🚀</p>
+            <div class="footer-links">
+                <a href="#">About Us</a>
+                <a href="#">Contact</a>
+                <a href="#">Terms</a>
+                <a href="#">Privacy</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/theme.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/courses.js"></script>
+</body>
+</html>
+    <div id="courseModal" style="display:none;position:fixed;inset:0;background:rgba(2,6,23,0.6);z-index:1001;align-items:center;justify-content:center;">
+      <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;max-width:640px;width:90%;padding:24px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <h3 id="mTitle" style="font-size:1.4rem;"></h3>
+          <button id="mClose" class="btn-primary" style="width:auto;padding:8px 12px;">Close</button>
+        </div>
+        <p id="mInstructor" style="color:#425466;margin-top:8px;"></p>
+        <p id="mMeta" style="color:#4b647c;margin:8px 0;"></p>
+        <p id="mDesc" style="margin-top:12px;"></p>
+      </div>
+    </div>

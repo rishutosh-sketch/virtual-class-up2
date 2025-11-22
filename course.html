@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Course Detail</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo-text">Virtual Classroom</div>
+      <ul class="nav-links">
+        <li><a class="nav-link" href="index.html">Home</a></li>
+        <li><a class="nav-link" href="dashboard.html">Dashboard</a></li>
+        <li><a class="nav-link" href="profile.html">Profile</a></li>
+        <li><a class="nav-link btn-glow" href="login.html">Login</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="container" id="courseDetail">
+    <section class="course-detail">
+      <h1 class="section-title" id="cdTitle"></h1>
+      <p class="section-subtitle" id="cdMeta"></p>
+      <p id="cdDesc" class="course-desc"></p>
+      <div class="progress-wrap">
+        <div class="progress-bar"><div class="progress-fill" id="cdProgress" style="width:0%"></div></div>
+        <div class="progress-text" id="cdProgressText"></div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-title">Lessons</h2>
+      <div class="lesson-list" id="lessonList"></div>
+    </section>
+
+    <section>
+      <h2 class="section-title">Quiz</h2>
+      <div id="quizContainer"></div>
+    </section>
+
+    <section>
+      <h2 class="section-title">Assignment</h2>
+      <div id="assignmentContainer"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-text">© 2025 Virtual Classroom</div>
+    </div>
+  </footer>
+
+  <script src="js/auth.js"></script>
+  <script src="js/course.js"></script>
+</body>
+</html>

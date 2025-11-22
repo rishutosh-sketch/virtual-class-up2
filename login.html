@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Virtual Classroom</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .login-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+        .login-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; width: 100%; max-width: 420px; box-shadow: var(--shadow); }
+        .login-header { text-align: center; margin-bottom: 16px; }
+        .login-icon { font-size: 2rem; }
+        .login-title { font-size: 1.5rem; font-weight: 700; margin-top: 8px; }
+        .login-subtitle { color: var(--text-muted); font-size: 0.95rem; }
+        .form-group { margin-bottom: 12px; }
+        .form-label { display: block; margin-bottom: 6px; color: var(--text); font-weight: 600; font-size: 0.9rem; }
+        .form-input { width: 100%; padding: 10px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 0.95rem; }
+        .form-input:focus { outline: none; border-color: var(--primary); }
+        .forgot-password { text-align: right; margin-top: 6px; }
+        .forgot-password a { color: var(--accent); font-size: 0.9rem; }
+        .btn-submit { width: 100%; padding: 10px; background: var(--primary); color: #fff; border-radius: 8px; font-size: 1rem; font-weight: 600; margin-top: 12px; }
+        .btn-submit:hover { background: var(--primary-hover); }
+        .divider { display: flex; align-items: center; gap: 8px; margin: 16px 0; color: var(--text-muted); }
+        .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+        .form-footer { text-align: center; margin-top: 12px; color: var(--text-muted); }
+        .form-footer a { color: var(--primary); font-weight: 600; }
+        .error-message, .success-message { padding: 10px 12px; border-radius: 8px; margin-bottom: 12px; display: none; font-weight: 600; font-size: 0.95rem; text-align: center; }
+        .error-message { background: #fee2e2; color: #7f1d1d; border: 1px solid #fecaca; }
+        .success-message { background: #dcfce7; color: #14532d; border: 1px solid #bbf7d0; }
+        .demo-credentials { background: var(--surface-alt); border: 1px solid var(--border); border-radius: 8px; padding: 10px; margin-bottom: 12px; text-align: center; }
+        .demo-credentials p { color: var(--text-muted); font-size: 0.9rem; margin: 0.25rem 0; }
+        .demo-credentials strong { color: var(--text); }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="login-icon">🔐</div>
+                <h1 class="login-title">WELCOME BACK</h1>
+                <p class="login-subtitle">Access Your Learning Journey</p>
+            </div>
+
+            <div class="demo-credentials">
+                <p><strong>🎯 Demo Accounts:</strong></p>
+                <p>Student: <strong>student@test.com</strong> / <strong>123456</strong></p>
+                <p>Instructor: <strong>instructor@test.com</strong> / <strong>123456</strong></p>
+            </div>
+
+            <div class="error-message" id="errorMessage"></div>
+            <div class="success-message" id="successMessage"></div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label" for="email">📧 Email Address</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        class="form-input" 
+                        placeholder="your.email@example.com"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">🔒 Password</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        class="form-input" 
+                        placeholder="Enter your password"
+                        required
+                    >
+                    <div class="forgot-password">
+                        <a href="#">Forgot Password?</a>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit">🚀 Login</button>
+            </form>
+
+            <div class="divider">
+                <span>OR</span>
+            </div>
+
+            <div class="form-footer">
+                New to Virtual Classroom? <a href="register.html">Join Now →</a>
+            </div>
+
+            <div class="back-home">
+                <a href="index.html">← Back to Home</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script>
+        // Login form handler
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const errorMsg = document.getElementById('errorMessage');
+            const successMsg = document.getElementById('successMessage');
+
+            // Hide previous messages
+            errorMsg.style.display = 'none';
+            successMsg.style.display = 'none';
+
+            // Basic validation
+            if (!email || !password) {
+                errorMsg.textContent = '⚠️ Please enter both email and password!';
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            // Call login function from auth.js
+            login(email, password);
+        });
+
+        // Auto-fill demo credentials on click
+        document.querySelectorAll('.demo-credentials p').forEach(p => {
+            if (p.textContent.includes('student@test.com') || p.textContent.includes('instructor@test.com')) {
+                p.style.cursor = 'pointer';
+                p.addEventListener('click', function() {
+                    if (this.textContent.includes('student@test.com')) {
+                        document.getElementById('email').value = 'student@test.com';
+                        document.getElementById('password').value = '123456';
+                    } else if (this.textContent.includes('instructor@test.com')) {
+                        document.getElementById('email').value = 'instructor@test.com';
+                        document.getElementById('password').value = '123456';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

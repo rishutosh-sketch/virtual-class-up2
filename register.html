@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Virtual Classroom</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .register-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+        .register-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; width: 100%; max-width: 480px; box-shadow: var(--shadow); }
+        .register-header { text-align: center; margin-bottom: 16px; }
+        .register-icon { font-size: 2rem; }
+        .register-title { font-size: 1.5rem; font-weight: 700; margin-top: 8px; }
+        .register-subtitle { color: var(--text-muted); font-size: 0.95rem; }
+        .form-group { margin-bottom: 12px; }
+        .form-label { display: block; margin-bottom: 6px; color: var(--text); font-weight: 600; font-size: 0.9rem; }
+        .form-input { width: 100%; padding: 10px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 0.95rem; }
+        .form-input:focus { outline: none; border-color: var(--primary); }
+        .role-selection { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px; }
+        .role-btn { padding: 10px; background: var(--surface-alt); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-weight: 600; }
+        .role-btn.active { background: #e0f2fe; border-color: #bae6fd; color: var(--text); }
+        .btn-submit { width: 100%; padding: 10px; background: var(--primary); color: #fff; border-radius: 8px; font-size: 1rem; font-weight: 600; margin-top: 12px; }
+        .btn-submit:hover { background: var(--primary-hover); }
+        .form-footer { text-align: center; margin-top: 12px; color: var(--text-muted); }
+        .form-footer a { color: var(--primary); font-weight: 600; }
+        .error-message, .success-message { padding: 10px 12px; border-radius: 8px; margin-bottom: 12px; display: none; font-weight: 600; font-size: 0.95rem; text-align: center; }
+        .error-message { background: #fee2e2; color: #7f1d1d; border: 1px solid #fecaca; }
+        .success-message { background: #dcfce7; color: #14532d; border: 1px solid #bbf7d0; }
+        .back-home { text-align: center; margin-top: 12px; }
+        .back-home a { color: var(--accent); font-weight: 600; }
+        .password-strength { height: 4px; background: #e5e7eb; border-radius: 2px; margin-top: 6px; overflow: hidden; }
+        .password-strength-bar { height: 100%; width: 0; background: linear-gradient(90deg, #ef4444, #f59e0b, #22c55e); transition: width 0.3s ease; }
+        @media (max-width: 600px) { .role-selection { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="register-card">
+            <div class="register-header">
+                <div class="register-icon">🚀</div>
+                <h1 class="register-title">JOIN THE REVOLUTION</h1>
+                <p class="register-subtitle">Unlock Your Potential • Start Your Journey</p>
+            </div>
+
+            <div class="error-message" id="errorMessage"></div>
+            <div class="success-message" id="successMessage"></div>
+
+            <form id="registerForm">
+                <div class="form-group">
+                    <label class="form-label" for="name">👤 Full Name</label>
+                    <input 
+                        type="text" 
+                        id="name" 
+                        class="form-input" 
+                        placeholder="Enter your full name"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="email">📧 Email Address</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        class="form-input" 
+                        placeholder="your.email@example.com"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">🔒 Create Password</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        class="form-input" 
+                        placeholder="Minimum 6 characters"
+                        required
+                    >
+                    <div class="password-strength">
+                        <div class="password-strength-bar" id="strengthBar"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="confirmPassword">🔒 Confirm Password</label>
+                    <input 
+                        type="password" 
+                        id="confirmPassword" 
+                        class="form-input" 
+                        placeholder="Re-enter your password"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">🎯 Select Your Path</label>
+                    <div class="role-selection">
+                        <button type="button" class="role-btn active" data-role="student">
+                            📚 Student
+                        </button>
+                        <button type="button" class="role-btn" data-role="instructor">
+                            👨‍🏫 Instructor
+                        </button>
+                    </div>
+                    <input type="hidden" id="role" value="student">
+                </div>
+
+                <button type="submit" class="btn-submit">🔥 Create Account</button>
+            </form>
+
+            <div class="form-footer">
+                Already a member? <a href="login.html">Login Now →</a>
+            </div>
+
+            <div class="back-home">
+                <a href="index.html">← Back to Home</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script>
+        // Password strength indicator
+        const passwordInput = document.getElementById('password');
+        const strengthBar = document.getElementById('strengthBar');
+
+        passwordInput.addEventListener('input', function() {
+            const length = this.value.length;
+            let strength = 0;
+            
+            if (length >= 6) strength = 33;
+            if (length >= 8) strength = 66;
+            if (length >= 10) strength = 100;
+            
+            strengthBar.style.width = strength + '%';
+        });
+
+        // Role selection toggle
+        const roleButtons = document.querySelectorAll('.role-btn');
+        const roleInput = document.getElementById('role');
+
+        roleButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                roleButtons.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                roleInput.value = this.getAttribute('data-role');
+            });
+        });
+
+        // Register form handler
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const role = document.getElementById('role').value;
+            const errorMsg = document.getElementById('errorMessage');
+            const successMsg = document.getElementById('successMessage');
+
+            errorMsg.style.display = 'none';
+            successMsg.style.display = 'none';
+
+            if (!name || !email || !password || !confirmPassword) {
+                errorMsg.textContent = '⚠️ All fields are required!';
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                errorMsg.textContent = '❌ Passwords do not match!';
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            if (password.length < 6) {
+                errorMsg.textContent = '❌ Password must be at least 6 characters!';
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            // Call register function from auth.js
+            register(name, email, password, role);
+        });
+    </script>
+</body>
+</html>

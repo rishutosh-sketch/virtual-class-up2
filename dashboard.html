@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Virtual Classroom</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo"><span class="logo-text">⚡ Virtual Classroom</span></div>
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-link">🏠 Home</a></li>
+        <li><a href="dashboard.html" class="nav-link active btn-glow">📚 Dashboard</a></li>
+        <li><a href="profile.html" class="nav-link">👤 Profile</a></li>
+        <li><a href="#" id="themeToggle" class="nav-link">🌞 Light</a></li>
+        <li><a href="#" id="logoutLink" class="nav-link">🔓 Logout</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-content">
+      <h1 class="hero-title mega-glow" id="dashTitle">My Learning</h1>
+      <p class="hero-subtitle glow-text" id="dashSubtitle"></p>
+    </div>
+    <div class="floating-orbs">
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+      <div class="orb orb-3"></div>
+      <div class="orb orb-4"></div>
+      <div class="orb orb-5"></div>
+    </div>
+  </section>
+
+  <section class="courses-section">
+    <div class="container">
+      <h2 class="section-title ultra-glow">📘 Enrolled Courses</h2>
+      <p class="section-subtitle" id="emptyState">No courses yet. Explore and enroll from Home.</p>
+      <div class="courses-grid" id="enrollGrid"></div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <p class="footer-text">💜 Keep leveling up • Virtual Classroom</p>
+    </div>
+  </footer>
+
+  <script src="js/theme.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>
