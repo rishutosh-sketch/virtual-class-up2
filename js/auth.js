@@ -30,8 +30,17 @@ function clearMessages() {
   if (ok) ok.style.display = 'none';
 }
 
+var API_BASE = (function(){
+  var v = localStorage.getItem('vc_api_base') || '';
+  if (v) return v.replace(/\/+$/,'');
+  var origin = window.location.origin;
+  var isDevStatic = origin.indexOf('127.0.0.1:5500') !== -1 || origin.indexOf('localhost:5500') !== -1;
+  if (isDevStatic) return 'http://localhost:3000';
+  return '';
+})();
+
 function register(name, email, password, role) {
-  fetch('/api/register', {
+  fetch(API_BASE + '/api/register', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ name, email, password, role })
@@ -51,7 +60,7 @@ function register(name, email, password, role) {
 }
 
 function login(email, password) {
-  fetch('/api/login', {
+  fetch(API_BASE + '/api/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password })
@@ -76,7 +85,7 @@ function logout() {
 function addEnrollment(course) {
   const token = getToken();
   if (!token) return false;
-  return fetch('/api/enroll', {
+  return fetch(API_BASE + '/api/enroll', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
     body: JSON.stringify(course)
@@ -86,7 +95,7 @@ function addEnrollment(course) {
 function getEnrollments() {
   const token = getToken();
   if (!token) return [];
-  return fetch('/api/enrollments', {
+  return fetch(API_BASE + '/api/enrollments', {
     headers: { 'Authorization': 'Bearer ' + token }
   }).then(function(r) { return r.json(); })
     .then(function(j) { return j.enrollments || []; });
@@ -95,7 +104,7 @@ function getEnrollments() {
 function removeEnrollment(id) {
   const token = getToken();
   if (!token) return false;
-  return fetch('/api/enrollments/' + id, {
+  return fetch(API_BASE + '/api/enrollments/' + id, {
     method: 'DELETE',
     headers: { 'Authorization': 'Bearer ' + token }
   }).then(function(r) { return r.ok; });

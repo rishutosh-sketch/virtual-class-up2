@@ -5,7 +5,15 @@ function ensureAuth() {
 
 function loadProfile() {
   var t = localStorage.getItem('vc_token');
-  fetch('/api/me', { headers: { 'Authorization': 'Bearer ' + t } })
+  var API_BASE = (function(){
+    var v = localStorage.getItem('vc_api_base') || '';
+    if (v) return v.replace(/\/+$/,'');
+    var origin = window.location.origin;
+    var isDevStatic = origin.indexOf('127.0.0.1:5500') !== -1 || origin.indexOf('localhost:5500') !== -1;
+    if (isDevStatic) return 'http://localhost:3000';
+    return '';
+  })();
+  fetch(API_BASE + '/api/me', { headers: { 'Authorization': 'Bearer ' + t } })
     .then(function(r){ return r.json(); })
     .then(function(j){
       var u = j.user;
@@ -41,7 +49,7 @@ function loadProfile() {
 
 function updateName(name) {
   var t = localStorage.getItem('vc_token');
-  fetch('/api/me', {
+  fetch(API_BASE + '/api/me', {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + t },
     body: JSON.stringify({ name: name })

@@ -27,7 +27,7 @@ if (process.env.CORS_ORIGIN) {
 db.serialize(() => {
   db.run('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, email TEXT UNIQUE, passwordHash TEXT, role TEXT)');
   db.run('CREATE TABLE IF NOT EXISTS enrollments (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, title TEXT, instructor TEXT, category TEXT, course_id INTEGER, created_at TEXT, FOREIGN KEY(user_id) REFERENCES users(id))');
-  db.run('CREATE TABLE IF NOT EXISTS courses (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, instructor TEXT, category TEXT, level TEXT, duration TEXT, description TEXT)');
+  db.run('CREATE TABLE IF NOT EXISTS courses (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, instructor TEXT, category TEXT, level TEXT, duration TEXT, description TEXT, image_url TEXT)');
   db.run('CREATE TABLE IF NOT EXISTS lessons (id INTEGER PRIMARY KEY AUTOINCREMENT, course_id INTEGER, title TEXT, content TEXT, order_index INTEGER)');
   db.run('CREATE TABLE IF NOT EXISTS lesson_progress (user_id INTEGER, lesson_id INTEGER, completed INTEGER, completed_at TEXT, PRIMARY KEY(user_id, lesson_id))');
   db.run('CREATE TABLE IF NOT EXISTS quizzes (id INTEGER PRIMARY KEY AUTOINCREMENT, course_id INTEGER, title TEXT)');
@@ -45,6 +45,12 @@ db.serialize(() => {
     if (!row || row.c === 0) {
       const hash = bcrypt.hashSync('123456', 10);
       db.run('INSERT INTO users (name,email,passwordHash,role) VALUES (?,?,?,?)', ['Instructor Demo', 'instructor@test.com', hash, 'instructor']);
+    }
+  });
+  db.get('SELECT COUNT(*) as c FROM users WHERE email = ?', ['admin@test.com'], (err, row) => {
+    if (!row || row.c === 0) {
+      const hash = bcrypt.hashSync('123456', 10);
+      db.run('INSERT INTO users (name,email,passwordHash,role) VALUES (?,?,?,?)', ['Admin Demo', 'admin@test.com', hash, 'admin']);
     }
   });
 
@@ -77,17 +83,26 @@ db.serialize(() => {
     }
   });
 
+  db.all('PRAGMA table_info(courses)', [], (err, cols) => {
+    if (!err) {
+      const hasImage = Array.isArray(cols) && cols.some(c => c.name === 'image_url');
+      if (!hasImage) {
+        db.run('ALTER TABLE courses ADD COLUMN image_url TEXT');
+      }
+    }
+  });
+
   db.get('SELECT COUNT(*) as c FROM courses', (err, row) => {
     const seed = !row || row.c === 0;
     if (seed) {
-      const stmt = db.prepare('INSERT INTO courses (id,title,instructor,category,level,duration,description) VALUES (?,?,?,?,?,?,?)');
+      const stmt = db.prepare('INSERT INTO courses (id,title,instructor,category,level,duration,description,image_url) VALUES (?,?,?,?,?,?,?,?)');
       const seedCourses = [
-        [1, 'Web Development Mastery', 'John Smith', 'Web Dev', 'Beginner', '12h', 'Build modern responsive websites using HTML, CSS, and JS.'],
-        [2, 'JavaScript Superpowers', 'Sarah Johnson', 'Programming', 'Intermediate', '10h', 'Master ES6+, async patterns, and practical DOM workflows.'],
-        [3, 'Python Domination', 'Mike Davis', 'Coding', 'Beginner', '14h', 'From basics to OOP and packages with hands-on labs.'],
-        [4, 'Data Science Revolution', 'Emily Chen', 'Data Science', 'Advanced', '16h', 'Statistics, pandas, visualization, and ML foundations.'],
-        [5, 'UI/UX Design Legends', 'Alex Rivera', 'Design', 'Beginner', '8h', 'Human-centered design, wireframes, and prototyping best practices.'],
-        [6, 'MongoDB Database Beast', 'Robert Kumar', 'Database', 'Intermediate', '9h', 'Schemas, queries, indexes, and performance tuning.']
+        [1, 'Web Development Mastery', 'John Smith', 'Web Dev', 'Beginner', '12h', 'Build modern responsive websites using HTML, CSS, and JS.', 'https://upload.wikimedia.org/wikipedia/commons/6/61/HTML5_logo_and_wordmark.svg'],
+        [2, 'JavaScript Superpowers', 'Sarah Johnson', 'Programming', 'Intermediate', '10h', 'Master ES6+, async patterns, and practical DOM workflows.', 'https://share.google/images/Q4dZtlgWHmiK8w6Of'],
+        [3, 'Python Domination', 'Mike Davis', 'Coding', 'Beginner', '14h', 'From basics to OOP and packages with hands-on labs.', 'https://upload.wikimedia.org/wikipedia/commons/f/f8/Python_logo_and_wordmark.svg'],
+        [4, 'Data Science Revolution', 'Emily Chen', 'Data Science', 'Advanced', '16h', 'Statistics, pandas, visualization, and ML foundations.', 'https://upload.wikimedia.org/wikipedia/commons/1/12/Chart_bar_black.svg'],
+        [5, 'UI/UX Design Legends', 'Alex Rivera', 'Design', 'Beginner', '8h', 'Human-centered design, wireframes, and prototyping best practices.', 'https://upload.wikimedia.org/wikipedia/commons/3/33/Figma-logo.svg'],
+        [6, 'MongoDB Database Beast', 'Robert Kumar', 'Database', 'Intermediate', '9h', 'Schemas, queries, indexes, and performance tuning.', 'https://upload.wikimedia.org/wikipedia/commons/9/93/MongoDB_Logo.svg']
       ];
       for (const c of seedCourses) stmt.run(c);
       stmt.finalize();
@@ -96,18 +111,19 @@ db.serialize(() => {
 
   // Add additional courses if missing by title
   const moreCourses = [
-    { id: 7, title: 'React Essentials', instructor: 'Nina Patel', category: 'Web Dev', level: 'Intermediate', duration: '11h', description: 'Components, hooks, and state management fundamentals.' },
-    { id: 8, title: 'TypeScript for Pros', instructor: 'David Lee', category: 'Programming', level: 'Intermediate', duration: '9h', description: 'Types, generics, interfaces, and integrating with JS projects.' },
-    { id: 9, title: 'Node.js API Design', instructor: 'Priya Sharma', category: 'Backend', level: 'Intermediate', duration: '12h', description: 'REST patterns, auth, validation, and performance.' },
-    { id: 10, title: 'SQL & Data Modeling', instructor: 'Luis Garcia', category: 'Database', level: 'Beginner', duration: '10h', description: 'Relational fundamentals, SQL queries, and schema design.' },
-    { id: 11, title: 'Cloud Fundamentals', instructor: 'Karen Green', category: 'Cloud', level: 'Beginner', duration: '8h', description: 'Compute, storage, networking, and deployment basics.' },
-    { id: 12, title: 'DevOps Basics', instructor: 'Tom Nguyen', category: 'DevOps', level: 'Beginner', duration: '7h', description: 'CI/CD, pipelines, environments, and observability.' }
+    { id: 7, title: 'React Essentials', instructor: 'Nina Patel', category: 'Web Dev', level: 'Intermediate', duration: '11h', description: 'Components, hooks, and state management fundamentals.', image_url: 'https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg' },
+    { id: 8, title: 'TypeScript for Pros', instructor: 'David Lee', category: 'Programming', level: 'Intermediate', duration: '9h', description: 'Types, generics, interfaces, and integrating with JS projects.', image_url: 'https://upload.wikimedia.org/wikipedia/commons/4/4c/Typescript_logo_2020.svg' },
+    { id: 9, title: 'Node.js API Design', instructor: 'Priya Sharma', category: 'Backend', level: 'Intermediate', duration: '12h', description: 'REST patterns, auth, validation, and performance.', image_url: 'https://upload.wikimedia.org/wikipedia/commons/d/d9/Node.js_logo.svg' },
+    { id: 10, title: 'SQL & Data Modeling', instructor: 'Luis Garcia', category: 'Database', level: 'Beginner', duration: '10h', description: 'Relational fundamentals, SQL queries, and schema design.', image_url: '' },
+    { id: 12, title: 'DevOps Basics', instructor: 'Tom Nguyen', category: 'DevOps', level: 'Beginner', duration: '7h', description: 'CI/CD, pipelines, environments, and observability.', image_url: 'https://upload.wikimedia.org/wikipedia/commons/3/3f/Git_icon.svg' }
   ];
   moreCourses.forEach((c) => {
     db.get('SELECT id FROM courses WHERE title = ?', [c.title], (e, row2) => {
       const cid = row2 && row2.id ? row2.id : c.id;
       if (!row2) {
-        db.run('INSERT INTO courses (id,title,instructor,category,level,duration,description) VALUES (?,?,?,?,?,?,?)', [c.id, c.title, c.instructor, c.category, c.level, c.duration, c.description]);
+        db.run('INSERT INTO courses (title,instructor,category,level,duration,description,image_url) VALUES (?,?,?,?,?,?,?)', [c.title, c.instructor, c.category, c.level, c.duration, c.description, c.image_url || '']);
+      } else if (c.image_url) {
+        db.run('UPDATE courses SET image_url = ? WHERE id = ?', [c.image_url, cid]);
       }
       db.get('SELECT COUNT(*) as c FROM lessons WHERE course_id = ?', [cid], (e2, r2) => {
         const needSeed = !r2 || r2.c === 0;
@@ -129,6 +145,79 @@ db.serialize(() => {
         }
       });
     });
+  });
+
+  const setImages = [
+    ['Web Development Mastery','https://upload.wikimedia.org/wikipedia/commons/6/61/HTML5_logo_and_wordmark.svg'],
+    ['JavaScript Superpowers','https://upload.wikimedia.org/wikipedia/commons/6/6a/JavaScript-logo.png'],
+    ['Python Domination','https://upload.wikimedia.org/wikipedia/commons/f/f8/Python_logo_and_wordmark.svg'],
+    ['Data Science Revolution','https://upload.wikimedia.org/wikipedia/commons/1/12/Chart_bar_black.svg'],
+    ['UI/UX Design Legends','https://upload.wikimedia.org/wikipedia/commons/3/33/Figma-logo.svg'],
+    ['MongoDB Database Beast','https://upload.wikimedia.org/wikipedia/commons/9/93/MongoDB_Logo.svg']
+  ];
+  setImages.forEach(([title,url]) => {
+    db.run("UPDATE courses SET image_url = ? WHERE title = ? AND (image_url IS NULL OR image_url = '')", [url, title]);
+  });
+
+  db.run("UPDATE courses SET image_url = '/images/sql.jpg' WHERE title = 'SQL & Data Modeling'");
+  // Cloud Fundamentals removed entirely
+  db.run("UPDATE courses SET image_url = 'https://upload.wikimedia.org/wikipedia/commons/9/93/MongoDB_Logo.svg' WHERE title LIKE '%MongoDB%'");
+
+  // Remove unwanted courses (IDs 16 and 17) and clean related data
+  const toRemove = [16, 17];
+  db.all('SELECT id FROM quizzes WHERE course_id IN (' + toRemove.join(',') + ')', [], (err, qs) => {
+    if (!err) {
+      (qs || []).forEach(q => { db.run('DELETE FROM quiz_questions WHERE quiz_id = ?', [q.id]); });
+      db.run('DELETE FROM quizzes WHERE course_id IN (' + toRemove.join(',') + ')');
+    }
+  });
+  db.all('SELECT id FROM assignments WHERE course_id IN (' + toRemove.join(',') + ')', [], (err, as) => {
+    if (!err) {
+      (as || []).forEach(a => { db.run('DELETE FROM submissions WHERE assignment_id = ?', [a.id]); });
+      db.run('DELETE FROM assignments WHERE course_id IN (' + toRemove.join(',') + ')');
+    }
+  });
+  db.run('DELETE FROM lesson_progress WHERE lesson_id IN (SELECT id FROM lessons WHERE course_id IN (' + toRemove.join(',') + '))');
+  db.run('DELETE FROM lessons WHERE course_id IN (' + toRemove.join(',') + ')');
+  db.run('DELETE FROM enrollments WHERE course_id IN (' + toRemove.join(',') + ')');
+  db.run('DELETE FROM courses WHERE id IN (' + toRemove.join(',') + ')');
+  db.run("UPDATE courses SET image_url = 'https://share.google/images/Q4dZtlgWHmiK8w6Of' WHERE title = 'JavaScript Superpowers'");
+
+  const toRemove2 = [18, 19];
+  db.all('SELECT id FROM quizzes WHERE course_id IN (' + toRemove2.join(',') + ')', [], (err, qs) => {
+    if (!err) {
+      (qs || []).forEach(q => { db.run('DELETE FROM quiz_questions WHERE quiz_id = ?', [q.id]); });
+      db.run('DELETE FROM quizzes WHERE course_id IN (' + toRemove2.join(',') + ')');
+    }
+  });
+  db.all('SELECT id FROM assignments WHERE course_id IN (' + toRemove2.join(',') + ')', [], (err, as) => {
+    if (!err) {
+      (as || []).forEach(a => { db.run('DELETE FROM submissions WHERE assignment_id = ?', [a.id]); });
+      db.run('DELETE FROM assignments WHERE course_id IN (' + toRemove2.join(',') + ')');
+    }
+  });
+  db.run('DELETE FROM lesson_progress WHERE lesson_id IN (SELECT id FROM lessons WHERE course_id IN (' + toRemove2.join(',') + '))');
+  db.run('DELETE FROM lessons WHERE course_id IN (' + toRemove2.join(',') + ')');
+  db.run('DELETE FROM enrollments WHERE course_id IN (' + toRemove2.join(',') + ')');
+  db.run('DELETE FROM courses WHERE id IN (' + toRemove2.join(',') + ')');
+
+  // Remove Cloud Fundamentals by title and dependencies
+  db.get('SELECT id FROM courses WHERE title = ?', ['Cloud Fundamentals'], (errCF, rowCF) => {
+    if (!errCF && rowCF && rowCF.id) {
+      const cid = rowCF.id;
+      db.run('DELETE FROM lesson_progress WHERE lesson_id IN (SELECT id FROM lessons WHERE course_id = ?)', [cid]);
+      db.run('DELETE FROM lessons WHERE course_id = ?', [cid]);
+      db.run('DELETE FROM enrollments WHERE course_id = ?', [cid]);
+      db.all('SELECT id FROM quizzes WHERE course_id = ?', [cid], (e1, qs) => {
+        (qs || []).forEach(q => db.run('DELETE FROM quiz_questions WHERE quiz_id = ?', [q.id]));
+        db.run('DELETE FROM quizzes WHERE course_id = ?', [cid]);
+      });
+      db.all('SELECT id FROM assignments WHERE course_id = ?', [cid], (e2, as) => {
+        (as || []).forEach(a => db.run('DELETE FROM submissions WHERE assignment_id = ?', [a.id]));
+        db.run('DELETE FROM assignments WHERE course_id = ?', [cid]);
+      });
+      db.run('DELETE FROM courses WHERE id = ?', [cid]);
+    }
   });
 
   db.get('SELECT COUNT(*) as c FROM quizzes', (err, row) => {
@@ -236,15 +325,38 @@ app.patch('/api/me', auth, (req, res) => {
 });
 
 app.get('/api/courses', (req, res) => {
-  db.all('SELECT id,title,instructor,category,level,duration,description FROM courses ORDER BY id ASC', [], (err, rows) => {
+  db.all('SELECT id,title,instructor,category,level,duration,description,image_url FROM courses ORDER BY id ASC', [], (err, rows) => {
     if (err) return res.status(500).json({ error: 'server_error' });
     res.json({ courses: rows });
   });
 });
 
+app.get('/api/admin/courses', auth, requireRole('admin'), (req, res) => {
+  db.all('SELECT id,title,instructor,category,level,duration,description,image_url FROM courses ORDER BY id ASC', [], (err, rows) => {
+    if (err) return res.status(500).json({ error: 'server_error' });
+    res.json({ courses: rows });
+  });
+});
+
+app.patch('/api/courses/:id', auth, requireRole('admin'), (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  const allowed = ['title','instructor','category','level','duration','description','image_url'];
+  const data = {};
+  allowed.forEach(k => { if (typeof req.body[k] !== 'undefined') data[k] = req.body[k]; });
+  const keys = Object.keys(data);
+  if (keys.length === 0) return res.status(400).json({ error: 'no_fields' });
+  const set = keys.map(k => k + ' = ?').join(', ');
+  const vals = keys.map(k => data[k]);
+  vals.push(id);
+  db.run('UPDATE courses SET ' + set + ' WHERE id = ?', vals, function(err){
+    if (err) return res.status(500).json({ error: 'server_error' });
+    res.json({ ok: true, changes: this.changes });
+  });
+});
+
 app.get('/api/courses/:id', (req, res) => {
   const id = parseInt(req.params.id, 10);
-  db.get('SELECT id,title,instructor,category,level,duration,description FROM courses WHERE id = ?', [id], (err, course) => {
+  db.get('SELECT id,title,instructor,category,level,duration,description,image_url FROM courses WHERE id = ?', [id], (err, course) => {
     if (err) return res.status(500).json({ error: 'server_error' });
     if (!course) return res.status(404).json({ error: 'not_found' });
     res.json({ course });
@@ -370,7 +482,7 @@ app.post('/api/submissions/:id/feedback', auth, requireRole(['instructor','admin
 });
 
 app.get('/api/enrollments', auth, (req, res) => {
-  db.all('SELECT id,title,instructor,category,course_id,created_at FROM enrollments WHERE user_id = ? ORDER BY id DESC', [req.user.id], (err, rows) => {
+  db.all('SELECT e.id,e.title,e.instructor,e.category,e.course_id,e.created_at,c.image_url FROM enrollments e LEFT JOIN courses c ON c.id = e.course_id WHERE e.user_id = ? ORDER BY e.id DESC', [req.user.id], (err, rows) => {
     if (err) return res.status(500).json({ error: 'server_error' });
     res.json({ enrollments: rows });
   });

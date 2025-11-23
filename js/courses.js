@@ -29,6 +29,18 @@ function setupNavAuth() {
       li.appendChild(a);
       navList.insertBefore(li, loginLink.parentElement);
     }
+    if (user.role === 'admin') {
+      const hasAdmin = Array.from(navList.querySelectorAll('a')).some(a => a.textContent.includes('Admin'));
+      if (!hasAdmin) {
+        const li2 = document.createElement('li');
+        const a2 = document.createElement('a');
+        a2.href = 'admin.html';
+        a2.className = 'nav-link';
+        a2.textContent = '🛠 Admin';
+        li2.appendChild(a2);
+        navList.insertBefore(li2, loginLink.parentElement);
+      }
+    }
   }
 }
 
@@ -61,13 +73,31 @@ function renderCourses(courses) {
   const grid = document.getElementById('coursesGrid');
   if (!grid) return;
   grid.innerHTML = '';
+  function iconFor(cat){
+    var m = { 'Web Dev':'🌐', 'Programming':'💻', 'Coding':'💻', 'Data Science':'📊', 'Design':'🎨', 'Database':'🗂', 'Backend':'⚙️', 'Cloud':'☁️', 'DevOps':'🔧' };
+    return m[cat] || '📘';
+  }
+  function imageForCourse(c){
+    var u = {
+      'Web Dev': 'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=1200&q=80',
+      'Programming': 'https://images.unsplash.com/photo-1518779578993-ec3579fee39f?auto=format&fit=crop&w=1200&q=80',
+      'Coding': 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1200&q=80',
+      'Data Science': 'https://images.unsplash.com/photo-1529101091764-c3526daf38fe?auto=format&fit=crop&w=1200&q=80',
+      'Design': 'https://images.unsplash.com/photo-1554995207-46ebb1e3f9c7?auto=format&fit=crop&w=1200&q=80',
+      'Database': 'https://images.unsplash.com/photo-1558494949-ef5c343b51b7?auto=format&fit=crop&w=1200&q=80',
+      'Backend': 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80',
+      'Cloud': 'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?auto=format&fit=crop&w=1200&q=80',
+      'DevOps': 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1200&q=80'
+    };
+    return u[c.category] || 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1200&q=80';
+  }
   courses.forEach(c => {
     const card = document.createElement('div');
     card.className = 'course-card';
     const imgWrap = document.createElement('div');
     imgWrap.className = 'course-image';
     const img = document.createElement('img');
-    img.src = 'https://via.placeholder.com/300x200/e0f2fe/0f172a?text=' + encodeURIComponent(c.category);
+    img.src = c.image_url || imageForCourse(c);
     img.alt = c.title;
     const overlay = document.createElement('div');
     overlay.className = 'image-overlay';
@@ -86,15 +116,15 @@ function renderCourses(courses) {
     meta.textContent = c.level + ' • ' + c.duration;
     const category = document.createElement('span');
     category.className = 'course-category';
-    category.textContent = c.category;
+    category.textContent = iconFor(c.category) + ' ' + c.category;
     const actions = document.createElement('div');
     const learnBtn = document.createElement('button');
     learnBtn.className = 'btn-primary';
-    learnBtn.textContent = 'View Details';
+    learnBtn.textContent = '🔎 View Details';
     learnBtn.addEventListener('click', function(){ window.location.href = 'course.html?id=' + encodeURIComponent(c.id); });
     const enrollBtn = document.createElement('button');
     enrollBtn.className = 'btn-primary';
-    enrollBtn.textContent = 'Enroll';
+    enrollBtn.textContent = '✅ Enroll';
     enrollBtn.addEventListener('click', function(e){
       if (!getCurrentUser()) { window.location.href = 'login.html'; return; }
       addEnrollment({ title: c.title, instructor: 'By ' + c.instructor, category: c.category, course_id: c.id });
@@ -170,10 +200,33 @@ function setupCourseButtons() {
   });
 }
 
+var API_BASE = (function(){
+  var v = localStorage.getItem('vc_api_base') || '';
+  if (v) return v.replace(/\/+$/,'');
+  var origin = window.location.origin;
+  var isDevStatic = origin.indexOf('127.0.0.1:5500') !== -1 || origin.indexOf('localhost:5500') !== -1;
+  if (isDevStatic) return 'http://localhost:3000';
+  return '';
+})();
+
 document.addEventListener('DOMContentLoaded', function() {
   setupNavAuth();
   setupSearch();
-  fetch('/api/courses').then(function(r){ return r.json(); }).then(function(j){
+  (function(){
+    var grid = document.getElementById('coursesGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    for (var i=0;i<6;i++){
+      var card = document.createElement('div');
+      card.className = 'skeleton-card';
+      var img = document.createElement('div'); img.className = 'skeleton-img skeleton-shimmer'; card.appendChild(img);
+      var l1 = document.createElement('div'); l1.className = 'skeleton-line skeleton-shimmer'; card.appendChild(l1);
+      var l2 = document.createElement('div'); l2.className = 'skeleton-line skeleton-shimmer'; card.appendChild(l2);
+      var l3 = document.createElement('div'); l3.className = 'skeleton-line skeleton-shimmer'; card.appendChild(l3);
+      grid.appendChild(card);
+    }
+  })();
+  fetch(API_BASE + '/api/courses').then(function(r){ return r.json(); }).then(function(j){
     const courses = j.courses || [];
     renderCourses(courses);
     setupFilters(courses);

@@ -6,7 +6,7 @@
     <title>Virtual Classroom - Unleash Your Potential</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="home-page">
+<body>
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
@@ -22,44 +22,45 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <h1 class="hero-title text-glow mega-glow">Virtual Classroom</h1>
-            <p class="hero-subtitle glow-text">🔥 Unleash Your Potential • Learn Without Limits 🚀</p>
-            <p class="hero-tagline">Master New Skills in the Most Epic Way Possible</p>
-            <div class="floating-orbs">
-                <div class="orb orb-1"></div>
-                <div class="orb orb-2"></div>
-                <div class="orb orb-3"></div>
-                <div class="orb orb-4"></div>
-                <div class="orb orb-5"></div>
+    <!-- Home Card -->
+    <section class="home-container">
+      <div class="home-card">
+        <section class="hero" style="padding:32px 20px 0;">
+          <div class="hero-content">
+            <h1 class="hero-title text-glow mega-glow"><span class="accent">Virtual</span> Classroom</h1>
+            <p class="hero-subtitle glow-text">Unleash Your Potential • Learn Without Limits</p>
+            <p class="hero-tagline">Master new skills with a premium learning experience</p>
+            <div class="cta-group">
+              <a href="#courses" class="btn-primary" style="width:auto;padding:12px 18px;">Get Started</a>
+              <a href="dashboard.html" class="btn-secondary" style="width:auto;padding:12px 18px;border-color:rgba(245,158,11,0.6);color:#f59e0b;">Learn More</a>
             </div>
+          </div>
+        </section>
+        <div class="search-block" style="padding:24px 20px 32px;">
+          <h2 class="search-heading">🎯 Discover Your Next Adventure</h2>
+          <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="🔍 Search for epic courses..." class="search-input">
+            <button class="search-btn btn-glow mega-btn"><span>EXPLORE</span></button>
+          </div>
+          <div id="filterChips" style="display:flex;gap:12px;justify-content:center;margin-top:16px;"></div>
         </div>
+      </div>
     </section>
 
-    <!-- Search Section -->
-    <section class="search-section">
-        <div class="container">
-            <h2 class="search-heading">🎯 Discover Your Next Adventure</h2>
-            <div class="search-bar">
-                <input type="text" id="searchInput" placeholder="🔍 Search for epic courses..." class="search-input">
-                <button class="search-btn btn-glow mega-btn">
-                    <span>EXPLORE</span>
-                </button>
-            </div>
-            <div id="filterChips" style="display:flex;gap:12px;justify-content:center;margin-top:16px;"></div>
-        </div>
-    </section>
+    <div class="section-divider"></div>
+
+    
 
     <!-- Courses Section -->
-    <section class="courses-section">
+    <section class="courses-section" id="courses">
         <div class="container">
             <h2 class="section-title ultra-glow">🌟 Trending Courses 🔥</h2>
             <p class="section-subtitle">Level Up Your Skills with These Mind-Blowing Courses</p>
             <div class="courses-grid" id="coursesGrid"></div>
         </div>
     </section>
+
+    <div class="section-divider"></div>
 
     <!-- Stats Section -->
     <section class="stats-section">

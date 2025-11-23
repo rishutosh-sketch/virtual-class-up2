@@ -6,8 +6,16 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('cdTitle').textContent = 'Course not found';
     return;
   }
+  var API_BASE = (function(){
+    var v = localStorage.getItem('vc_api_base') || '';
+    if (v) return v.replace(/\/+$/,'');
+    var origin = window.location.origin;
+    var isDevStatic = origin.indexOf('127.0.0.1:5500') !== -1 || origin.indexOf('localhost:5500') !== -1;
+    if (isDevStatic) return 'http://localhost:3000';
+    return '';
+  })();
 
-  fetch('/api/courses/' + id)
+  fetch(API_BASE + '/api/courses/' + id)
     .then(r => r.json())
     .then(j => {
       const c = j.course;
@@ -16,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('cdDesc').textContent = c.description || '';
     });
 
-  fetch('/api/courses/' + id + '/lessons')
+  fetch(API_BASE + '/api/courses/' + id + '/lessons')
     .then(r => r.json())
     .then(j => {
       const lessons = j.lessons || [];
@@ -45,11 +53,19 @@ document.addEventListener('DOMContentLoaded', function() {
       refreshLessonStates(id);
       scrollToHash();
     });
+  (function(){
+    var list = document.getElementById('lessonList');
+    if (!list) return;
+    list.innerHTML = '';
+    for (var i=0;i<3;i++){
+      var s = document.createElement('div'); s.className = 'skeleton-line skeleton-shimmer'; s.style.height = '48px'; list.appendChild(s);
+    }
+  })();
 
   function refreshProgress(courseId) {
     const token = getToken();
     if (!token) { document.getElementById('cdProgress').style.width = '0%'; document.getElementById('cdProgressText').textContent = 'Login to track progress'; return; }
-    fetch('/api/courses/' + courseId + '/progress', { headers: { 'Authorization': 'Bearer ' + token }})
+    fetch(API_BASE + '/api/courses/' + courseId + '/progress', { headers: { 'Authorization': 'Bearer ' + token }})
       .then(r => r.json())
       .then(j => {
         const pct = j.percent || 0;
@@ -61,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function() {
   function refreshLessonStates(courseId) {
     const token = getToken();
     if (!token) return;
-    fetch('/api/courses/' + courseId + '/lesson-progress', { headers: { 'Authorization': 'Bearer ' + token }})
+    fetch(API_BASE + '/api/courses/' + courseId + '/lesson-progress', { headers: { 'Authorization': 'Bearer ' + token }})
       .then(r => r.json())
       .then(j => {
         (j.items || []).forEach(item => {
@@ -82,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function() {
   function updateProgress(lessonId, completed) {
     const token = getToken();
     if (!token) { window.location.href = 'login.html'; return; }
-    fetch('/api/lessons/' + lessonId + '/progress', {
+    fetch(API_BASE + '/api/lessons/' + lessonId + '/progress', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
       body: JSON.stringify({ completed: completed })
@@ -92,13 +108,13 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  fetch('/api/courses/' + id + '/quizzes')
+  fetch(API_BASE + '/api/courses/' + id + '/quizzes')
     .then(r => r.json())
     .then(j => {
       const quizzes = j.quizzes || [];
       if (!quizzes.length) return;
       const q = quizzes[0];
-      fetch('/api/quizzes/' + q.id)
+      fetch(API_BASE + '/api/quizzes/' + q.id)
         .then(r => r.json())
         .then(d => {
           const wrap = document.getElementById('quizContainer');
@@ -137,7 +153,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const answers = {};
     const inputs = container.querySelectorAll('input[type="radio"]');
     inputs.forEach(function(inp){ if (inp.checked) { const qid = parseInt(inp.name.replace('q-',''), 10); answers[qid] = parseInt(inp.value, 10); } });
-    fetch('/api/quizzes/' + quizId + '/attempt', {
+    fetch(API_BASE + '/api/quizzes/' + quizId + '/attempt', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
       body: JSON.stringify({ answers: answers })
@@ -149,7 +165,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  fetch('/api/courses/' + id + '/assignments')
+  fetch(API_BASE + '/api/courses/' + id + '/assignments')
     .then(r => r.json())
     .then(j => {
       const items = j.assignments || [];
@@ -180,7 +196,7 @@ document.addEventListener('DOMContentLoaded', function() {
   function submitAssignment(assignmentId, content) {
     const token = getToken();
     if (!token) { window.location.href = 'login.html'; return; }
-    fetch('/api/assignments/' + assignmentId + '/submit', {
+    fetch(API_BASE + '/api/assignments/' + assignmentId + '/submit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
       body: JSON.stringify({ content: content })
@@ -190,7 +206,7 @@ document.addEventListener('DOMContentLoaded', function() {
   function refreshSubmission(assignmentId) {
     const token = getToken();
     if (!token) return;
-    fetch('/api/assignments/' + assignmentId + '/submission', { headers: { 'Authorization': 'Bearer ' + token }})
+    fetch(API_BASE + '/api/assignments/' + assignmentId + '/submission', { headers: { 'Authorization': 'Bearer ' + token }})
       .then(function(r){ return r.json(); })
       .then(function(j){
         if (j.submission) {
