@@ -1,16 +1,16 @@
 /* ==================== CSS VARIABLES - EXTRA COLORFUL ==================== */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 :root {
-  --surface: #0b0b12;
-  --surface-alt: #101016;
-  --border: #1f2937;
-  --text: #e5e7eb;
-  --text-muted: #94a3b8;
-  --primary: #ef4444;
-  --primary-hover: #dc2626;
-  --accent: #7c3aed;
-  --shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
-  --ring: #ef4444;
+  --surface: #0b0c10;
+  --surface-alt: #0f1117;
+  --border: #1e293b;
+  --text: #f8fafc;
+  --text-muted: #cbd5e1;
+  --primary: #f5c518;
+  --primary-hover: #d4a80b;
+  --accent: #ffd34d;
+  --shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  --ring: #f5c518;
 }
 
 .theme-dark {
@@ -34,7 +34,7 @@
 
 body {
   font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #0d0d12 0%, #120a12 30%, #2a0f19 65%, #1a1238 100%);
+  background: linear-gradient(180deg, #0a0a0a 0%, #0b0b0d 100%);
   color: var(--text);
   line-height: 1.6;
   min-height: 100vh;
@@ -46,15 +46,14 @@ body {
 body::before {
   content: '';
   position: fixed;
-  inset: -30% -10% -30% -10%;
+  inset: -20% -10% -20% -10%;
   pointer-events: none;
   z-index: 0;
   background:
-    radial-gradient(900px 420px at 20% 5%, rgba(200, 30, 65, 0.28), transparent 60%),
-    radial-gradient(700px 360px at 85% -5%, rgba(124, 58, 237, 0.28), transparent 60%),
-    linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.10) 50%, transparent 100%);
+    radial-gradient(900px 420px at 15% 5%, rgba(245,197,24,0.18), transparent 60%),
+    radial-gradient(700px 360px at 85% -5%, rgba(245,197,24,0.12), transparent 60%);
   animation: shinePulse 10s ease-in-out infinite;
-  opacity: 0.55;
+  opacity: 0.45;
 }
 @keyframes shinePulse { 0%,100% { opacity: 0.50; transform: translate3d(0,0,0); } 50% { opacity: 0.65; transform: translate3d(0,-6px,0); } }
 
@@ -64,11 +63,13 @@ body::after {
   left: 0;
   top: 0;
   height: 100vh;
-  width: 28vw;
+  width: 100vw;
   pointer-events: none;
   z-index: 0;
-  background: repeating-linear-gradient(to right, rgba(239, 68, 68, 0.45) 0 2px, transparent 2px 40px);
-  opacity: 0.35;
+  background:
+    repeating-linear-gradient(140deg, rgba(245,197,24,0.28) 0 2px, transparent 2px 160px),
+    repeating-linear-gradient(25deg, rgba(245,197,24,0.18) 0 2px, transparent 2px 220px);
+  opacity: 0.18;
 }
 
 html {
@@ -263,7 +264,7 @@ button {
 
 .search-input { flex: 1; padding: 12px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 1rem; transition: border 0.2s ease; }
 
-.search-input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.28); }
+.search-input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 4px rgba(245, 197, 24, 0.28); }
 
 .search-input::placeholder {
   color: var(--text-muted);
@@ -280,7 +281,7 @@ button {
 .home-card .search-heading { margin-top: 8px; }
 .home-card .search-bar { max-width: 720px; }
 .home-card .search-input { background: var(--surface-alt); }
-.home-card .search-btn.mega-btn { box-shadow: 0 8px 18px rgba(239,68,68,0.35); }
+.home-card .search-btn.mega-btn { box-shadow: 0 8px 18px rgba(245,197,24,0.28); }
 
 /* ==================== COURSES SECTION ==================== */
 .courses-section {
@@ -323,7 +324,7 @@ button {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, transparent 0%, rgba(239, 68, 68, 0.12) 100%);
+  background: linear-gradient(135deg, transparent 0%, rgba(245, 197, 24, 0.12) 100%);
   opacity: 0;
   transition: opacity 0.3s ease;
   z-index: 0;
@@ -382,14 +383,14 @@ button {
 
 /* removed pulse animation for minimal look */
 
-.course-image { width: 100%; height: 190px; overflow: hidden; position: relative; background: #ffffff; }
+.course-image { width: 100%; height: 200px; overflow: hidden; position: relative; background: linear-gradient(180deg, #0b0c10 0%, #0f1117 100%); border-bottom: 1px solid var(--border); }
 
 .course-image img {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  padding: 12px;
-  background: #ffffff;
+  padding: 18px 20px;
+  background: transparent;
   transition: transform 0.4s ease;
 }
 
@@ -420,7 +421,7 @@ button {
 
 .course-desc { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.75rem; }
 
-.course-category { display: inline-block; padding: 0.3rem 0.6rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; color: #fff; background: rgba(239, 68, 68, 0.18); border: 1px solid rgba(239, 68, 68, 0.35); }
+.course-category { display: inline-block; padding: 0.3rem 0.6rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; color: #111; background: rgba(245, 197, 24, 0.22); border: 1px solid rgba(245, 197, 24, 0.38); }
 
 .badge-purple {
   background: #e0f2fe;
@@ -437,10 +438,10 @@ button {
   color: var(--text);
 }
 
-.btn-primary { width: 100%; padding: 10px; background: linear-gradient(180deg, var(--primary) 0%, var(--primary-hover) 100%); color: #fff; border-radius: 10px; font-weight: 600; font-size: 0.95rem; transition: transform 0.15s ease, box-shadow 0.15s ease; box-shadow: 0 8px 18px rgba(239,68,68,0.35); }
+.btn-primary { width: 100%; padding: 10px; background: linear-gradient(180deg, var(--primary) 0%, var(--primary-hover) 100%); color: #111; border-radius: 10px; font-weight: 600; font-size: 0.95rem; transition: transform 0.15s ease, box-shadow 0.15s ease; box-shadow: 0 8px 18px rgba(245,197,24,0.28); }
 
-.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 12px 22px rgba(239,68,68,0.45); }
-.btn-primary:active { transform: translateY(0); box-shadow: 0 6px 12px rgba(239,68,68,0.32); }
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 12px 22px rgba(245,197,24,0.42); }
+.btn-primary:active { transform: translateY(0); box-shadow: 0 6px 12px rgba(245,197,24,0.26); }
  .btn-secondary { width: 100%; padding: 10px; background: #fff; color: var(--text); border: 1px solid var(--border); border-radius: 10px; font-weight: 600; font-size: 0.95rem; transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease; }
  .btn-secondary:hover { border-color: #cbd5e1; box-shadow: 0 6px 14px rgba(2,6,23,0.08); transform: translateY(-1px); }
  .btn-secondary:active { transform: translateY(0); box-shadow: 0 4px 10px rgba(2,6,23,0.06); }
