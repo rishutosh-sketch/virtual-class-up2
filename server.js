@@ -663,6 +663,6 @@ app.delete('/api/enrollments/:id', auth, (req, res) => {
 
 app.use(express.static(__dirname));
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log('Server listening on http://localhost:' + PORT);
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
